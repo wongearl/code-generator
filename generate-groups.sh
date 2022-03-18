@@ -13,14 +13,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+# 在扩展开发的过程中为自己的CRD生成 informer client set 等时调用的此脚本
 set -o errexit
 set -o nounset
 set -o pipefail
 
 # generate-groups generates everything for a project with external types only, e.g. a project based
 # on CustomResourceDefinitions.
-
+# 帮助文档
 if [ "$#" -lt 4 ] || [ "${1}" == "--help" ]; then
   cat <<EOF
 Usage: $(basename "$0") <generators> <output-package> <apis-package> <groups-versions> ...
@@ -39,12 +39,12 @@ Examples:
 EOF
   exit 0
 fi
-
+# 接收外部传来的四个参数
 GENS="$1"
 OUTPUT_PKG="$2"
 APIS_PKG="$3"
 GROUPS_WITH_VERSIONS="$4"
-shift 4
+shift 4  #保留第5个参数开始的参数
 
 (
   # To support running this script from anywhere, first cd into this directory,
@@ -68,7 +68,7 @@ for GVs in ${GROUPS_WITH_VERSIONS}; do
     FQ_APIS+=("${APIS_PKG}/${G}/${V}")
   done
 done
-
+# "$*" 代表所有的参数合成一个字符串  "$@"代表所有的参数每个参数是一个单独的字符串
 if [ "${GENS}" = "all" ] || grep -qw "deepcopy" <<<"${GENS}"; then
   echo "Generating deepcopy funcs"
   "${gobin}/deepcopy-gen" --input-dirs "$(codegen::join , "${FQ_APIS[@]}")" -O zz_generated.deepcopy "$@"
