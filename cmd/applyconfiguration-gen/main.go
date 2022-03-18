@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 // typebuilder-gen is a tool for auto-generating apply builder functions.
+// 用来生成资源的Apply函数
 package main
 
 import (
@@ -30,16 +31,21 @@ import (
 
 func main() {
 	klog.InitFlags(nil)
+	// 初始化通用参数，和定制参数
 	genericArgs, customArgs := generatorargs.NewDefaults()
+	// 配置文件头部内容模板路径
 	genericArgs.GoHeaderFilePath = util.BoilerplatePath()
+	// 添加命令行参数到genericArgs
 	genericArgs.AddFlags(pflag.CommandLine)
 	customArgs.AddFlags(pflag.CommandLine, "k8s.io/kubernetes/pkg/apis") // TODO: move this input path out of client-gen
 	if err := flag.Set("logtostderr", "true"); err != nil {
 		klog.Fatalf("Error: %v", err)
 	}
+	// 添加命令行参数到spf13
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
+	// 解析参数
 	pflag.Parse()
-
+	// 检查参数
 	if err := generatorargs.Validate(genericArgs); err != nil {
 		klog.Fatalf("Error: %v", err)
 	}
