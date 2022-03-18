@@ -52,8 +52,10 @@ func main() {
 
 	// Run it.
 	if err := genericArgs.Execute(
+		// 用于为给定的的生成器，命名系统生成Context上下文，每个生成器的Context是全局唯一的，保存一些生成器所需要使用的变量
 		generators.NameSystems(),
 		generators.DefaultNameSystem(),
+		// 用于生成Packages
 		generators.Packages,
 	); err != nil {
 		klog.Fatalf("Error: %v", err)
